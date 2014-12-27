@@ -41,7 +41,7 @@ def _fetch_data(urls):
         try:
             req = requests.get(url)
             if req.status_code == 200:
-                data = req.text.strip()
+                data = req.text.strip().replace('"', '')
                 if data is None or not _verify_address(data):
                     continue
                 else:
@@ -65,4 +65,4 @@ def get_ext_ip(config=None, urls=None):
 
 
 if __name__ == "__main__":
-    print get_ext_ip(urls=["http://www.telize.com/ip", "http://queryip.net/ip/", "http://ifconfig.me/ip"])
+    print get_ext_ip(urls=["https://api.shodan.io/tools/myip"])

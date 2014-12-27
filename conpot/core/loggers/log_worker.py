@@ -26,11 +26,9 @@ from datetime import datetime
 import ConfigParser
 from gevent.queue import Empty
 
+from conpot.core.loggers.shodan import ShodanLogger
 from conpot.core.loggers.sqlite_log import SQLiteLogger
-from conpot.core.loggers.mysql_log import MySQLlogger
-from conpot.core.loggers.hpfriends import HPFriendsLogger
 from conpot.core.loggers.syslog import SysLogger
-from conpot.core.loggers.taxii_log import TaxiiLogger
 
 logger = logging.getLogger(__name__)
 
@@ -41,37 +39,12 @@ class LogWorker(object):
         self.log_queue = session_manager.log_queue
         self.session_manager = session_manager
         self.sqlite_logger = None
-        self.mysql_logger = None
-        self.friends_feeder = None
         self.syslog_client = None
         self.public_ip = public_ip
-        self.taxii_logger = None
+        self.shodan_logger = ShodanLogger()
 
         if config.getboolean('sqlite', 'enabled'):
             self.sqlite_logger = SQLiteLogger()
-
-        if config.getboolean('mysql', 'enabled'):
-            host = config.get('mysql', 'host')
-            port = config.getint('mysql', 'port')
-            db = config.get('mysql', 'db')
-            username = config.get('mysql', 'username')
-            passphrase = config.get('mysql', 'passphrase')
-            logdevice = config.get('mysql', 'device')
-            logsocket = config.get('mysql', 'socket')
-            sensorid = config.get('common', 'sensorid')
-            self.mysql_logger = MySQLlogger(host, port, db, username, passphrase, logdevice, logsocket, sensorid)
-
-        if config.getboolean('hpfriends', 'enabled'):
-            host = config.get('hpfriends', 'host')
-            port = config.getint('hpfriends', 'port')
-            ident = config.get('hpfriends', 'ident')
-            secret = config.get('hpfriends', 'secret')
-            channels = eval(config.get('hpfriends', 'channels'))
-            try:
-                self.friends_feeder = HPFriendsLogger(host, port, ident, secret, channels)
-            except Exception as e:
-                logger.exception(e.message)
-                self.friends_feeder = None
 
         if config.getboolean('syslog', 'enabled'):
             host = config.get('syslog', 'host')
@@ -80,10 +53,6 @@ class LogWorker(object):
             logdevice = config.get('syslog', 'device')
             logsocket = config.get('syslog', 'socket')
             self.syslog_client = SysLogger(host, port, facility, logdevice, logsocket)
-
-        if config.getboolean('taxii', 'enabled'):
-            # TODO: support for certificates
-            self.taxii_logger = TaxiiLogger(config, dom)
 
         self.enabled = True
 
@@ -125,20 +94,17 @@ class LogWorker(object):
                 if self.public_ip:
                     event["public_ip"] = self.public_ip
 
-                if self.friends_feeder:
-                    self.friends_feeder.log(json.dumps(event, default=self._json_default))
+                # if self.friends_feeder:
+                #     self.friends_feeder.log(json.dumps(event, default=self._json_default))
 
                 if self.sqlite_logger:
                     self.sqlite_logger.log(event)
 
-                if self.mysql_logger:
-                    self.mysql_logger.log(event)
-
                 if self.syslog_client:
                     self.syslog_client.log(event)
 
-                if self.taxii_logger:
-                    self.taxii_logger.log(event)
+                if self.shodan_logger:
+                    self.shodan_logger.log(event)
 
     def stop(self):
         self.enabled = False
