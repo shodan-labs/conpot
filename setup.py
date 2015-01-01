@@ -9,7 +9,7 @@ setup(
     version=conpot.__version__,
     packages=find_packages(exclude=['*.pyc']),
     scripts=['bin/conpot'],
-    url="http://conpot.org",
+    url="https://github.com/shodan-labs/conpot",
     license='GPL 2',
     author="Glastopf Project",
     author_email="glastopf@public.honeynet.org",
@@ -34,7 +34,6 @@ setup(
     test_suite='nose.collector',
     tests_require="nose",
     dependency_links=[
-        "https://github.com/rep/hpfeeds/archive/master.zip#egg=hpfeeds",
         "https://github.com/glastopf/modbus-tk/archive/master.zip#egg=modbus-tk"
     ],
     install_requires=open('requirements.txt').read().splitlines(),

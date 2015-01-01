@@ -12,3 +12,5 @@ cybox
 crc16
 enum
 modbus-tk
+redis
+simplejson

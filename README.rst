@@ -17,6 +17,8 @@ ABOUT
 Conpot is an ICS honeypot with the goal to collect intelligence about the motives and
 methods of adversaries targeting industrial control systems
 
+This is a fork tailored to work with Shodan's Threatnet.
+
 DOCUMENTATION
 -------------
 
@@ -24,15 +26,6 @@ The build of the documentations `source <https://github.com/glastopf/conpot/tree
 found `here <http://glastopf.github.io/conpot/>`_. There you will also find the instructions on how to 
 `install <http://glastopf.github.io/conpot/installation/ubuntu.html>`_ conpot and the 
 `FAQ <http://glastopf.github.io/conpot/faq.html>`_.
-
-HPFEEDS
--------
-
-The honeypot has hpfeeds, our central logging feature disabled by
-default. By sending your data via hpfeeds you agree that your data
-might be shared with 3rd parties. If you are interested in the data
-collected by Conpot instances, please contact Lukas at
-glaslos@gmail.com
 
 SUPPORT
 -------
